@@ -22,7 +22,7 @@ Priority queues are lists that accept items mapped with an arbitrary
 "priority" value. The list is ordered based on this priority value and can vary based on the strategy implemented in the comparison/sorting function.
 
 ##Vectors
-Vectors are a flat list of items of the same type
+Vectors are arrays that can dynamically grow in size.
 
 #Maps
 
