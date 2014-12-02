@@ -15,7 +15,7 @@ Stacks are LIFO lists. You put something on top of a list, at the first index, a
 Queues are FIFO lists. In that new items get added to the end of the list and items are only accessed from the front of the array. Queues are useful when the array size is not known and when you want to access the oldest "waiting" items first.
 
 ##Heaps
-Heaps are lists in that adding an item to the list is organised by an internal ordering mechanism. Heaps are used when the size is not known and the items need to be ordered in a means of how they compare to each other
+A heap if a tree structure of which the nodes are arranged in  some manner that priority is indicated. For example a tree where the most popular produced are organised and sorted towards the top of the tree. This would allow for quick traversal of the products.
 
 ##Priority Queues
 Priority queues are lists that accept items mapped with an arbitrary 
