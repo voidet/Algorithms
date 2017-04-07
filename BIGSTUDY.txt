@@ -1,0 +1,1750 @@
+
+@implementation STUDY
+
++ (LinkedNode *)buildLinkedList:(NSArray *)input {
+	
+	LinkedNode *node;
+	LinkedNode *currentNode;
+	
+	for (NSNumber *number in input) {
+		
+		LinkedNode *newNode = [[LinkedNode alloc] init];
+		newNode.data = [number integerValue];
+		
+		if (!node) {
+			node = newNode;
+		} else {
+			currentNode.next = newNode;
+		}
+		
+		currentNode = newNode;
+		
+	}
+	
+	return node;
+}
+
++ (LinkedNode *)getNthLastObject:(LinkedNode *)inputNode targetNode:(NSInteger)targetNode {
+	
+	NSInteger length = 0;
+	LinkedNode *currentNode = inputNode;
+	while (currentNode) {
+		currentNode = currentNode.next;
+		length++;
+	}
+	
+	currentNode = inputNode;
+	for (int i=0; i < (length - targetNode); i++) {
+		currentNode = currentNode.next;
+	}
+	
+	return currentNode;
+}
+
++ (NSInteger)sum:(LinkedNode *)a with:(LinkedNode *)b {
+	
+	NSInteger tens = 0;
+	NSInteger runningTotal = 0;
+	while (a || b) {
+		
+		NSInteger result = 0;
+		if (a && b) {
+			result = a.data + b.data;
+			a = a.next;
+			b = b.next;
+		} else if (a) {
+			result = a.data;
+			a = a.next;
+		} else if (b) {
+			result = b.data;
+			b = b.next;
+		}
+		
+		if (tens > 0) {
+			result = result * pow(10, tens);
+		}
+		runningTotal += result;
+		
+		tens++;
+	}
+	
+	return runningTotal;
+}
+
++ (NSInteger)reverseSum:(LinkedNode *)a with:(LinkedNode *)b {
+	
+	NSMutableArray *numbers = [NSMutableArray array];
+	
+	while (a || b) {
+		
+		NSInteger result;
+		if (a && b) {
+			result = a.data + b.data;
+			a = a.next;
+			b = b.next;
+		} else if (a) {
+			result = a.data;
+			a = a.next;
+		} else if (b) {
+			result = b.data;
+			b = b.next;
+		}
+		
+		[numbers addObject:@(result)];
+		
+	}
+
+	NSArray *immNumbers = [[numbers reverseObjectEnumerator] allObjects];
+	NSInteger units = 0;
+	NSInteger runningTotal = 0;
+	
+	for (NSNumber *number in immNumbers) {
+		
+		NSInteger result;
+		if (units > 0) {
+			result = [number integerValue] * pow(10, units);
+		} else {
+			result = [number integerValue];
+		}
+		
+		runningTotal += result;
+		units++;
+	}
+	
+	return runningTotal;
+}
+
++ (LinkedNode *)calculateCirculationStart:(LinkedNode *)inputNode {
+	
+	LinkedNode *turtle = inputNode;
+	LinkedNode *rabbit = inputNode;
+	
+	while (turtle && rabbit) {
+		
+		turtle = turtle.next;
+		rabbit = rabbit.next.next;
+		
+		if (turtle == rabbit) {
+			break;
+		}
+		
+	}
+	
+	// found a collision. move back to the head and go at same pace
+	
+	turtle = inputNode;
+	
+	while (turtle != rabbit) {
+		turtle = turtle.next;
+		rabbit = rabbit.next;
+	}
+		
+	
+	return turtle;
+}
+
+BOOL isAPalindrome(LinkedNode *inputNode) {
+	
+	LinkedNode *currentNode = inputNode;
+	NSMutableArray *stack = [NSMutableArray array];
+	LinkedNode *rabbit = inputNode;
+  BOOL startingToCheck = NO;
+
+	while (currentNode) {
+
+		if (rabbit.next.next) {
+			[stack addObject:currentNode.data];
+		} else {
+      
+      if(!startingToCheck && ([stack count] % 2)) {
+        startingToCheck = YES;
+      } else {
+        NSString *data = stack.lastObject;
+        [stack removeObject:stack.lastObject];
+        if (data != currentNode.data) {
+          return NO;
+        }
+      }
+		}
+
+		currentNode = currentNode.next;
+    rabbit = rabbit.next.next;
+
+	}
+
+	return YES;
+
+} 
+
+// YOU START FROM A CLEAN SLATE THEN 2
+// GET RID OF EVERYTHING DIVISIBLE BY 2 
++ (NSArray *)makePrimes:(NSInteger)max {
+	
+	NSMutableDictionary *primes = [NSMutableDictionary dictionary];
+	for (int i=2; i < max; i++) {
+		[primes setObject:@(i) forKey:@(i)];
+	}
+	
+	for (int n=2; n < max; n++) {
+	
+		if ([primes objectForKey:@(n)]) {
+			for (int i = n * n; i < max; i += n) {
+				[primes removeObjectForKey:@(i)];
+			}
+		}
+		
+	}
+	
+	return [primes allValues];
+}
+
+int main(int argc, char * argv[]) {
+	@autoreleasepool {
+		NSArray *numbers = @[@(0), @(1), @(2), @(3), @(4), @(3), @(2), @(1), @(0)];
+		LinkedNode *node = [LinkedNode buildLinkedList:numbers];
+		
+		NSLog(@"%@", [LinkedNode isAPalindrome:node] ? @"YES" : @"NO");
+		
+		LinkedNode *circularList = node;
+		LinkedNode *startOfLoop = circularList.next.next.next.next;
+		LinkedNode *endNode = circularList;
+		
+		while (endNode.next) {
+			endNode = endNode.next;
+		}
+		
+		endNode.next = startOfLoop;
+		
+		LinkedNode *nextNode = circularList;
+		LinkedNode *pointOfCirculation = [LinkedNode calculateCirculationStart:circularList];
+		
+		
+
+		
+		node = [LinkedNode getNthLastObject:node targetNode:2];
+		
+		numbers = @[@(1), @(2), @(3)];
+		LinkedNode *a = [LinkedNode buildLinkedList:numbers];
+		
+		numbers = @[@(4), @(5), @(6)];
+		LinkedNode *b = [LinkedNode buildLinkedList:numbers];
+		
+		NSInteger sum = [LinkedNode sum:a with:b];
+		
+		NSLog(@"%li", sum);
+		
+		numbers = @[@(3), @(2), @(1)];
+		a = [LinkedNode buildLinkedList:numbers];
+		
+		numbers = @[@(6), @(5), @(4)];
+		b = [LinkedNode buildLinkedList:numbers];
+		
+		sum = [LinkedNode reverseSum:a with:b];
+		
+		
+		
+		NSLog(@"%li", sum);
+	}
+}
+
+func getLastElement(node:Node, n:Int, counter:Int) -> Int {
+	
+	if (node.next == nil) {
+		return counter
+	}
+	
+	var counter:Int = getLastElement(node.next!, n, counter) + 1
+	
+	if (counter + 1 == n) {
+		println("DONE \(node.data)")
+	}
+	
+	return counter
+}
+
+LinkedNode * removeDuplicates(LinkedNode *inputNode) {
+	
+	NSMutableArray *duplicates = [NSMutableArray array];
+	LinkedNode *currentNode = inputNode;
+  LinkedNode *previousNode;
+
+	while (currentNode) {
+
+		if ([duplicates containsObject:currentNode.data]) {
+			previousNode.next = currentNode.next;
+		} else {
+			[duplicates addObject:currentNode.data];
+      previousNode = currentNode;
+		}
+    
+    currentNode = currentNode.next;
+
+	}
+
+	return inputNode;
+}
+
++ (NSArray *)sortTheNumbers:(NSArray *)input {
+	
+	NSMutableArray *sorted = [input mutableCopy];
+	for (int i=0;i<input.count; i++) {
+		for (int j=0;j<input.count - i - 1; j++) {
+			if (sorted[j] > sorted[j + 1]) {
+				NSNumber *tmp = sorted[j];
+				sorted[j] = sorted[j + 1];
+				sorted[j + 1] = tmp;
+			}
+		}
+	}
+	
+	return [NSArray arrayWithArray:sorted];
+}
+
++ (NSArray *)sortWithMergeSort:(NSArray *)input {
+	
+	if (input.count <= 1) {
+		return input;
+	}
+	
+	NSMutableArray *mutableInput = [input mutableCopy];
+	NSInteger mid = floorf(input.count / 2);
+	NSArray *left = [Me sortWithMergeSort:[mutableInput subarrayWithRange:NSMakeRange(0, mid)]];
+	NSArray *right = [Me sortWithMergeSort:[mutableInput subarrayWithRange:NSMakeRange(mid, input.count - left.count)]];
+	
+	
+	return [Me sortResultsLeft:left andRight:right];
+}
+
++ (NSArray *)sortResultsLeft:(NSArray *)left andRight:(NSArray *)right {
+	
+	NSMutableArray *sorted = [NSMutableArray array];
+	NSInteger leftCount = 0;
+	NSInteger rightCount = 0;
+	
+	
+	for (int i=0; i < (left.count + right.count); i ++) {
+		
+		if (leftCount < left.count && (rightCount >= right.count || ((NSNumber *)left[leftCount]).integerValue < ((NSNumber *)right[rightCount]).integerValue)) {
+			[sorted addObject:left[leftCount++]];
+		} else {
+			[sorted addObject:right[rightCount++]];
+		}
+		
+	}
+	
+	return [NSArray arrayWithArray:sorted];
+}
+
++ (NSArray *)quickSort:(NSArray *)input {
+	
+	if (input.count <= 1) {
+		return input;
+	}
+	
+	NSMutableArray *inputMutable = [input mutableCopy];
+	NSNumber *pivot = input[0];
+	[inputMutable removeObjectAtIndex:0];
+	NSMutableArray *left = [NSMutableArray array];
+	NSMutableArray *right = [NSMutableArray array];
+	
+	for (NSNumber *number in inputMutable) {
+		
+		if (number.integerValue < pivot.integerValue) {
+			[left addObject:number];
+		} else {
+			[right addObject:number];
+		}
+		
+	}
+	
+	NSArray *sortedLeft = [Me quickSort:left];
+	NSArray *sortedRight = [Me quickSort:right];
+	
+	NSMutableArray *sorted = [NSMutableArray array];
+	[sorted addObjectsFromArray:sortedLeft];
+	[sorted addObject:pivot];
+	[sorted addObjectsFromArray:sortedRight];
+	
+	return [NSArray arrayWithArray:sorted];
+}
+
++ (NSMutableDictionary *)anafy:(NSArray *)words {
+	
+	NSMutableDictionary *ourWords = [NSMutableDictionary dictionary];
+	for (NSString *word in words) {
+		NSString *ourWord = [word lowercaseString];
+		NSMutableArray *wordExploded = [NSMutableArray array];
+		
+		for (int i=0; i<ourWord.length;i++) {
+			NSString *str = [NSString stringWithFormat:@"%c", [ourWord characterAtIndex:i]];
+			[wordExploded addObject:str];
+		}
+		
+		wordExploded = [[wordExploded sortedArrayUsingComparator:^NSComparisonResult(NSString *a, NSString *b) {
+			
+			return [a compare:b];
+		}] mutableCopy];
+		
+		ourWord = [wordExploded componentsJoinedByString:@""];
+		
+		NSMutableArray *obj = [ourWords objectForKey:ourWord];
+		if (!obj) {
+			obj = [NSMutableArray array];
+		}
+		[obj addObject:word];
+		[ourWords setObject:obj forKey:ourWord];
+	}
+	
+	return ourWords;
+}
+
++ (NSArray *)moveTheZeros:(NSArray *)nums {
+	NSInteger x = 0;
+	NSMutableArray *ourNums = [nums mutableCopy];
+	
+	for (NSNumber *num in nums) {
+		if (num.integerValue == 0) {
+			[ourNums removeObjectAtIndex:x];
+			[ourNums insertObject:@(0) atIndex:0];
+		}
+		x++;
+	}
+	return ourNums;
+}
+
++ (BOOL)binarySearch:(NSArray *)nums withTarget:(NSInteger)target {
+	
+	nums = [nums sortedArrayUsingComparator:^NSComparisonResult(NSNumber *a, NSNumber *b) {
+		return [a compare:b];
+	}];
+	
+	NSArray *check = nums;
+	while (check.count > 0) {
+		
+		if (check.count <= 1) {
+			return ((NSNumber *)check[0]).integerValue == target;
+		}
+		
+		NSInteger mid = floorf(check.count / 2);
+		NSNumber *item = check[mid];
+		if (item.integerValue > target) {
+			check = [check subarrayWithRange:NSMakeRange(0, mid)];
+		} else {
+			check = [check subarrayWithRange:NSMakeRange(mid, check.count - mid)];
+		}
+		
+	}
+	
+	return NO;
+}
+
++ (NSArray *)twoStacks:(NSArray *)input {
+	
+	NSMutableArray *stack = [input mutableCopy];
+	NSMutableArray *newStack = [NSMutableArray array];
+	
+	while (stack.count > 0) {
+		NSNumber *tmp = [stack objectAtIndex:0];
+		[stack removeObjectAtIndex:0];
+		
+		while (newStack.count > 0 && ((NSNumber *)[newStack objectAtIndex:0]).integerValue > tmp.integerValue) {
+			NSNumber *toMove = [newStack objectAtIndex:0];
+			[stack insertObject:toMove atIndex:0];
+			[newStack removeObjectAtIndex:0];
+		}
+		
+		[newStack insertObject:tmp atIndex:0];
+	}
+
+	return newStack;
+}
+
++ (BOOL)canFindEnd:(Node *)rootNode withTarget:(Node *)target {
+	
+	NSMutableArray *stack = [NSMutableArray array];
+	[stack addObject:rootNode];
+	
+	while (stack.count > 0) {
+		Node *node = [stack objectAtIndex:0];
+		[stack removeObjectAtIndex:0];
+		node.visited = YES;
+		
+		if (node == target) {
+			return YES;
+		}
+		
+		for (Node *neighbour in node.neighbours) {
+			if (!neighbour.visited) {
+				[stack addObject:neighbour];
+			}
+		}
+		
+	}
+	
+	return NO;
+}
+
++ (NodeBST *)createBST:(NSArray *)nodes {
+	
+	if (nodes.count == 0) {
+		return nil;
+	}
+	
+	NSInteger mid = floor(nodes.count / 2);
+	NodeBST *node = [[NodeBST alloc] init];
+	node.data = [nodes[mid] integerValue];
+	node.left = [Me createBST:[nodes subarrayWithRange:NSMakeRange(0, mid)]];
+	node.right  = [Me createBST:[nodes subarrayWithRange:NSMakeRange(mid + 1, nodes.count - mid - 1)]];
+	
+	return node;
+}
+
++ (NSArray *)preOrder:(NodeBST *)rootNode {
+	
+	if (rootNode == nil) {
+		return nil;
+	}
+	
+	
+	[Me preOrder:rootNode.left];
+	
+	[Me preOrder:rootNode.right];
+	NSLog(@"%lu", rootNode.data);
+	
+	return nil;
+}
+
++ (NSArray *)getListOfAnagrams:(NSArray *)input {
+	
+	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+	for (NSString *word in input) {
+		
+		NSMutableArray *wordAsArray = [NSMutableArray array];
+		for (int i=0;i<word.length;i++) {
+			[wordAsArray addObject:[NSString stringWithFormat:@"%c", [word characterAtIndex:i]]];
+		}
+		
+		wordAsArray = [[wordAsArray sortedArrayUsingComparator:^NSComparisonResult(NSString *a, NSString *b) {
+			return [a compare:b];
+		}] mutableCopy];
+		
+		NSString *wordSorted = [wordAsArray componentsJoinedByString:@""];
+		
+		NSMutableArray *words;
+		if ([[dict allKeys] containsObject:wordSorted]) {
+			words = [dict objectForKey:wordSorted];
+		} else {
+			words = [NSMutableArray array];
+		}
+		
+		[words addObject:word];
+		[dict setObject:words forKey:wordSorted];
+		
+	}
+	
+	return [dict allValues];
+	
+}
+
++ (NSArray *)findMissingNumbers:(NSArray *)input {
+	
+	NodeBST *rootNode = [Me createBSTWithArray:input];
+	
+	NSMutableArray *missing = [NSMutableArray array];
+	return [Me getMissingNumbers:rootNode withMissingArray:missing lastNumber:rootNode.data];
+}
+
++ (NSMutableArray *)getMissingNumbers:(NodeBST *)node withMissingArray:(NSMutableArray *)missing lastNumber:(NSInteger)lastNumber {
+	
+	if (node == nil) {
+		return missing;
+	}
+	
+	lastNumber = node.data;
+	[Me getMissingNumbers:node.left withMissingArray:missing lastNumber:lastNumber];
+	
+	if (node.data - lastNumber > 1) {
+		int x = 0;
+		for (NSInteger i=lastNumber;i < node.data;i++) {
+			x++;
+			[missing addObject:@(lastNumber + x)];
+		}
+	}
+	[Me getMissingNumbers:node.right withMissingArray:missing lastNumber:node.data];
+	
+	return missing;
+}
+
++ (NodeBST *)createBSTWithArray:(NSArray *)input {
+	
+	if (input.count <= 0) {
+		return nil;
+	}
+	
+	NSInteger mid = floor(input.count / 2);
+	NodeBST *node = [[NodeBST alloc] init];
+	node.data = ((NSNumber *)input[mid]).integerValue;
+	
+	node.left = [Me createBSTWithArray:[input subarrayWithRange:NSMakeRange(0, mid)]];
+	node.right = [Me createBSTWithArray:[input subarrayWithRange:NSMakeRange(mid + 1, input.count - mid - 1)]];
+	
+	return node;
+}
+
++ (NSArray *)findMissing:(NSArray *)input withMissing:(NSMutableArray *)missing withStart:(NSInteger)start andFinish:(NSInteger)finish {
+	
+	if (start + 1 == finish) {
+		for (NSInteger i=((NSNumber *)input[start]).integerValue + 1; i < ((NSNumber *)input[finish]).integerValue; i++) {
+			[missing addObject:@(i)];
+		}
+		return missing;
+	}
+	
+	
+	NSInteger mid = floor((start + finish) / 2);
+	[Me findMissing:input withMissing:missing withStart:start andFinish:mid];
+	[Me findMissing:input withMissing:missing withStart:mid andFinish:finish];
+	
+	return missing;
+}
+
++ (NSInteger)base64To10:(NSArray *)input {
+	
+	NSInteger base10Number = 0;
+
+	for (NSInteger i=0;i<input.count;i++) {
+		NSInteger multiplier = pow(64, input.count - i - 1);
+		
+		NSInteger num = ((NSNumber *)input[i]).integerValue;
+		base10Number = base10Number + (num * multiplier);
+	}
+	
+	return base10Number;
+}
+
++ (NSArray *)base10To64:(NSInteger)input {
+	
+	NSMutableArray *digits = [NSMutableArray array];
+	while (input > 0) {
+		
+		double div = input / 64;
+		if (input >= 64) {
+			input = input - (div * 64);
+			[digits insertObject:@(input) atIndex:0];
+			input = div;
+		} else {
+			[digits insertObject:@(floor(input)) atIndex:0];
+			break;
+		}
+		
+	}
+	return digits;
+}
+
++ (NSArray *)quickSort2:(NSMutableArray *)input {
+	
+	if (input.count <= 1) {
+		return input;
+	}
+	
+	NSNumber *pivot =input[0];
+	[input removeObjectAtIndex:0];
+	
+	NSMutableArray *left = [NSMutableArray array];
+	NSMutableArray *right = [NSMutableArray array];
+	for (int i=0;i<input.count;i++) {
+		
+		if (((NSNumber *)input[i]).integerValue < pivot.integerValue) {
+			[left addObject:input[i]];
+		} else {
+			[right addObject:input[i]];
+		}
+		
+	}
+	
+	NSArray *leftSorted = [Me quickSort:left];
+	NSArray *rightSorted = [Me quickSort:right];
+	
+	NSMutableArray *sorted = [NSMutableArray array];
+	[sorted addObjectsFromArray:leftSorted];
+	[sorted addObject:pivot];
+	[sorted addObjectsFromArray:rightSorted];
+	
+	return [NSArray arrayWithArray:sorted];
+}
+
++ (void)makeHanoi:(NSInteger)number a:(NSInteger)a b:(NSInteger)b c:(NSInteger)c tracker:(NSMutableArray *)tracker {
+	
+	if (number == 0) {
+		return;
+	}
+	
+	[Me makeHanoi:number - 1 a:a b:c c:b tracker:tracker];
+	[tracker addObject:[NSString stringWithFormat:@"Moved %lu to %lu", a, c]];
+	[Me makeHanoi:number - 1 a:b b:a c:c tracker:tracker];
+	
+}
+
++ (NSArray *)mergeSort:(NSArray *)input {
+	
+	if (input.count <= 1) {
+		return input;
+	}
+	
+	NSInteger mid = floor(input.count / 2);
+	NSArray *left = [Me mergeSort:[input subarrayWithRange:NSMakeRange(0, mid)]];
+	NSArray *right = [Me mergeSort:[input subarrayWithRange:NSMakeRange(mid, input.count - left.count)]];
+	
+	return [Me sortMergeSort:left withRight:right];
+}
+
++ (NSArray *)sortMergeSort:(NSArray *)left withRight:(NSArray *)right {
+	
+	NSMutableArray *sorted = [NSMutableArray array];
+	NSInteger leftCount = 0;
+	NSInteger rightCount = 0;
+	
+	for (int i=0; i < (left.count + right.count); i++) {
+		
+		if (leftCount < left.count && (rightCount >= right.count || left[leftCount] < right[rightCount])) {
+			[sorted addObject:left[leftCount++]];
+		} else {
+			[sorted addObject:right[rightCount++]];
+		}
+		
+	}
+	
+	return [NSArray arrayWithArray:sorted];
+}
+
+#pragma mark After Holidays
++ (NSString *)romanNumerals:(NSInteger)input {
+	
+	NSString *numerals = @"";
+	NSArray *map = @[
+									 @{@"M": @(1000)},
+									 @{@"CM": @(900)},
+									 @{@"D": @(500)},
+									 @{@"CD": @(400)},
+									 @{@"C": @(100)},
+									 @{@"XC": @(90)},
+									 @{@"L": @(50)},
+									 @{@"XL": @(40)},
+									 @{@"X": @(10)},
+									 @{@"IX": @(9)},
+									 @{@"V": @(5)},
+									 @{@"IV": @(4)},
+									 @{@"I": @(1)}
+									 ];
+	
+	NSInteger remainder = input;
+	NSInteger currentIndex = 0;
+	while (remainder > 0) {
+		NSString *key = [map[currentIndex] allKeys].firstObject;
+		NSInteger value = [[map[currentIndex] allValues].firstObject integerValue];
+		
+		if (remainder >= value) {
+			numerals = [NSString stringWithFormat:@"%@%@", numerals, key];
+			remainder -= value;
+		} else {
+			currentIndex++;
+		}
+	}
+
+	return numerals;
+}
+
++ (NSMutableArray *)quickSortHolidays:(NSMutableArray *)input {
+	
+	if ([input count] <= 1) {
+		return input;
+	}
+	
+	NSNumber *pivot = input[0];
+	[input removeObjectAtIndex:0];
+	NSMutableArray *left = [NSMutableArray array];
+	NSMutableArray *right = [NSMutableArray array];
+	
+	for (NSNumber *number in input) {
+		if ([number integerValue] < [pivot integerValue]) {
+			[left addObject:number];
+		} else {
+			[right addObject:number];
+		}
+	}
+	
+	left = [Me quickSortHolidays:left];
+	right = [Me quickSortHolidays:right];
+	
+	NSMutableArray *sortedArray = [NSMutableArray array];
+	[sortedArray arrayByAddingObjectsFromArray:left];
+	[sortedArray addObject:pivot];
+	[sortedArray arrayByAddingObjectsFromArray:right];
+	
+	return sortedArray;
+}
+
++ (NSMutableDictionary *)anafy2:(NSArray *)input {
+	
+	NSMutableDictionary *anagrams = [NSMutableDictionary dictionary];
+	
+	for (NSString *inputString in input) {
+		NSString *mutableString = [inputString lowercaseString];
+		NSMutableArray *orderedString = [NSMutableArray array];
+		for (int i=0;i<mutableString.length;i++) {
+			[orderedString addObject:[NSString stringWithFormat:@"%c", [mutableString characterAtIndex:i]]];
+		}
+		
+		NSArray *orderedStringArray = [orderedString sortedArrayUsingComparator:^NSComparisonResult(NSString *a, NSString *b) {
+			return [a compare:b];
+		}];
+		
+		mutableString = [orderedStringArray componentsJoinedByString:@""];
+		
+		if (![anagrams objectForKey:mutableString]) {
+			[anagrams setObject:[NSMutableArray array] forKey:mutableString];
+		}
+		
+		NSMutableArray *words = [anagrams objectForKey:mutableString];
+		[words addObject:inputString];
+	}
+	return anagrams;
+}
+
++ (NodeBST *)createBSTHoliday:(NSArray *)input {
+	
+	if ([input count] == 0) {
+		return nil;
+	}
+	
+	NSInteger mid = floor([input count] / 2);
+	NodeBST *node = [[NodeBST alloc] init];
+	node.data = [input[mid] integerValue];
+	node.left = [Me createBSTHoliday:[input subarrayWithRange:NSMakeRange(0, mid)]];
+	node.right = [Me createBSTHoliday:[input subarrayWithRange:NSMakeRange(mid + 1, [input count] - mid - 1)]];
+	
+	return node;
+}
+
++ (NSString *)printOutLevelLineByLine:(NodeBST *)inputNode {
+	
+	NSInteger levels = [Me getLevel:inputNode];
+	
+	NSMutableArray *queue = [NSMutableArray array];
+	[queue addObject:inputNode];
+	
+	NSString *string = @"\n";
+	
+	NSInteger parentNodeCount = 1;
+	NSInteger childNodeCount = 0;
+	
+	while ([queue count] > 0) {
+		
+		NodeBST *node = queue[0];
+		[queue removeObjectAtIndex:0];
+		
+		parentNodeCount--;
+		
+		string = [NSString stringWithFormat:@"%@ %i", string, (int)node.data];
+		
+		if (node.left) {
+			[queue addObject:node.left];
+			childNodeCount++;
+		}
+		
+		if (node.right) {
+			[queue addObject:node.right];
+			childNodeCount++;
+		}
+		
+		if (parentNodeCount == 0) {
+			string = [NSString stringWithFormat:@"%@\n", string];
+			parentNodeCount = childNodeCount;
+			childNodeCount = 0;
+		}
+		
+	}
+	
+	return string;
+}
+
++ (NSInteger)getLevel:(NodeBST *)node {
+	
+	NodeBST *currentNode = node;
+	NSInteger level = 0;
+	
+	while (currentNode) {
+		level++;
+		currentNode = currentNode.left;
+		
+	}
+	
+	return level;
+}
+
++ (NSString *)indentTree:(NodeBST *)inputNode {
+	NSMutableArray *queue = [NSMutableArray array];
+	[queue addObject:inputNode];
+	
+	NSString *string = @"";
+	
+	NSInteger parentNodeCount = 1;
+	NSInteger childNodeCount = 0;
+	
+	while ([queue count] > 0) {
+		
+		NodeBST *node = queue[0];
+		[queue removeObjectAtIndex:0];
+		
+		string = [NSString stringWithFormat:@"%@ %i", string, (int)node.data];
+		parentNodeCount--;
+		
+		if (node.left) {
+			[queue addObject:node.left];
+			childNodeCount++;
+		}
+		
+		if (node.right) {
+			[queue addObject:node.right];
+			childNodeCount++;
+		}
+		
+		if (parentNodeCount == 0) {
+			string = [NSString stringWithFormat:@"%@\n", string];
+			parentNodeCount = childNodeCount;
+			childNodeCount = 0;
+		}
+		
+	}
+	
+	return string;
+}
+
++ (NSArray *)dijkstras:(NSArray *)graph toDestination:(Vertex *)destinationNode {
+	
+	NSMutableArray *queue = [graph mutableCopy];
+	NSMutableDictionary *distances = [NSMutableDictionary dictionary];
+	NSMutableDictionary *previousPaths = [NSMutableDictionary dictionary];
+	
+	Vertex *currentNode = graph.firstObject;
+	
+	for (Vertex *vertex in graph) {
+		[distances setObject:@(0) forKey:vertex.key];
+		[previousPaths setObject:[NSNull null] forKey:vertex.key];
+	}
+	
+	[distances setObject:@(0) forKey:currentNode.key];
+	
+	while (queue) {
+		
+		
+		
+	}
+	
+	
+	return @[];
+}
+
++ (BOOL)hops:(NSArray *)hops {
+	
+	NSMutableArray *hopStack = [NSMutableArray array];
+	NSInteger currentIndex = 0;
+	NSInteger hop = [hops[0] integerValue];
+	
+	while ([hopStack count] <= [hops count]) {
+		
+		if (hop > 0) {
+			[hopStack addObject:@(hop)];
+			currentIndex += hop;
+			if (currentIndex < [hops count]) {
+				hop = [hops[currentIndex] integerValue];
+			}
+		} else {
+			hop = [hopStack.lastObject integerValue];
+			[hopStack removeObject:hopStack.lastObject];
+			currentIndex -= hop;
+			hop--;
+		}
+		
+		if (currentIndex > [hops count] - 1) {
+			return YES;
+			return NO;
+		} else if (hop == 0 && [hopStack count] == 0) {
+		}
+		
+	}
+	
+	return YES;
+}
+
++ (NSArray *)moveTheZerosAgain:(NSArray *)input {
+	NSMutableArray *mutableArray = [input mutableCopy];
+	NSInteger x = 0;
+	
+	for (NSNumber *num in input) {
+		if ([num integerValue] == 0) {
+			[mutableArray removeObjectAtIndex:x];
+			[mutableArray insertObject:@(0) atIndex:0];
+		}
+		x++;
+	}
+	
+	return [NSArray arrayWithArray:mutableArray];
+}
+
++ (LinkedNode *)createLinkedNode:(NSArray *)input {
+	
+	LinkedNode *node;
+	LinkedNode *currentNode;
+	
+
+	for (NSNumber *num in input) {
+	
+		LinkedNode *newNode = [[LinkedNode alloc] init];
+		newNode.data = @([num integerValue]);
+		
+		if (!node) {
+			node = newNode;
+		} else {
+			currentNode.next = newNode;
+		}
+		
+		currentNode = newNode;
+		
+	}
+	
+	return node;
+}
+
++ (BOOL)palindromeDetector:(NSString *)inputString {
+	
+	LinkedNode *palindromLinkedList;
+	LinkedNode *currentNode;
+	
+	NSMutableArray *palindromeArray = [NSMutableArray array];
+	for (int i=0; i < inputString.length; i++) {
+		[palindromeArray addObject:[NSString stringWithFormat:@"%c", [inputString characterAtIndex:i]]];
+	}
+	
+	for (NSString *character in palindromeArray) {
+		
+		LinkedNode *newNode = [[LinkedNode alloc] init];
+		newNode.data = character;
+		
+		if (!palindromLinkedList) {
+			palindromLinkedList = newNode;
+		} else {
+			currentNode.next = newNode;
+		}
+		
+		currentNode = newNode;
+	}
+	
+	// Magic begins
+	
+	NSString *pali = @"";
+	while (palindromLinkedList) {
+		pali = [NSString stringWithFormat:@"%@%@", pali, (NSString *)palindromLinkedList.data];
+		palindromLinkedList = palindromLinkedList.next;
+	}
+	
+	for (int i=0;i<floor(pali.length);i++) {
+		if ([pali characterAtIndex:i] != [pali characterAtIndex:pali.length - 1 - i]) {
+			return NO;
+		}
+	}
+	
+	return YES;
+}
+
++ (LinkedNode *)createDoublyLinkedList:(NSArray *)input {
+	
+	LinkedNode *node;
+	LinkedNode *currentNode;
+	
+	for (NSNumber *number in input) {
+		
+		LinkedNode *newNode = [[LinkedNode alloc] init];
+		newNode.data = number;
+		
+		if (!node) {
+			node = newNode;
+		} else {
+			currentNode.previous = currentNode;
+			currentNode.next = newNode;
+		}
+		
+		currentNode = newNode;
+		
+	}
+	
+	return node;
+}
+
++ (NodeBST *)doubleLinkedListToBST:(LinkedNode *)doublyLinkedList {
+	
+	if (!doublyLinkedList) {
+		return nil;
+	}
+	
+	NSInteger length = 0;
+	LinkedNode *trackedNode = doublyLinkedList;
+	while (trackedNode.next) {
+		trackedNode = trackedNode.next;
+		length++;
+	}
+	
+	LinkedNode *mid = doublyLinkedList;
+	if (length == 0) {
+		doublyLinkedList = nil;
+	} else {
+		for (int i=0;i<floor(length / 2);i++) {
+			mid = mid.next;
+		}
+		mid.previous.next = nil;
+	}
+	
+	NSLog(@"DBL: %@", doublyLinkedList);
+	NSLog(@"MID: %@", mid);
+	
+	NodeBST *node = [[NodeBST alloc] init];
+	node.data = [trackedNode.data integerValue];
+	
+	node.left = [Me doubleLinkedListToBST:doublyLinkedList];
+	node.right = [Me doubleLinkedListToBST:mid.next];
+	
+	return node;
+}
+
++ (BOOL)binarySearchRecursive:(NodeBST *)node withTarget:(NSInteger)target {
+	
+	if (node) {
+		if (node.data == target) {
+			return YES;
+		}
+		
+		NodeBST *nextNode = node.data > target ? node.left : node.right;
+		NSLog(@"%li - %li %@", node.data, target, node.data > target ? @"GREATER" : @"SMALLER");
+		return [Me binarySearchRecursive:nextNode withTarget:target];
+	}
+	
+	return NO;
+}
+
+// ----- MAIN
+
+
+int main (int argc, const char * argv[]) {
+	@autoreleasepool {
+		
+	NSInteger input = 201410;
+	NSInteger output = [Me base64To10:[Me base10To64:input]];
+		
+	NSArray *hops = @[@(1), @(2), @(3), @(0), @(0), @(1), @(1), @(1)];
+	NSLog(@"%@", [Me hops:hops] ? @"YES" : @"NO");
+	
+	NSLog(@"%@", [Me createLinkedNode:hops]);
+	NSLog(@"%@", [Me moveTheZerosAgain:hops]);
+		
+	
+	NSLog(@"%@", [Me palindromeDetector:@"abcba"] ? @"YES" : @"NO");
+	
+	Vertex *a = [[Vertex alloc] init];
+	a.key = @"A";
+	Vertex *b = [[Vertex alloc] init];
+	b.key = @"B";
+	Vertex *c = [[Vertex alloc] init];
+	c.key = @"C";
+	Vertex *d = [[Vertex alloc] init];
+	d.key = @"D";
+		
+	Edge *ab = [[Edge alloc] initWithWeight:10 andDestination:b];
+	Edge *ac = [[Edge alloc] initWithWeight:5 andDestination:c];
+	Edge *bd = [[Edge alloc] initWithWeight:2 andDestination:d];
+	Edge *cd = [[Edge alloc] initWithWeight:20 andDestination:d];
+		
+	a.neighbours = @[ab, ac];
+	b.neighbours = @[bd];
+	c.neighbours = @[cd];
+		
+	NSLog(@"%@", [Me dijkstras:@[a, b, c, d] toDestination:d]);
+		
+	NSLog(@"%@", [Me romanNumerals:2998]);
+	
+		if (input == output) {
+			NSLog(@"YES");
+		}
+		
+		NSMutableArray *tracker = [@[] mutableCopy];
+		[Me makeHanoi:3 a:1 b:2 c:3 tracker:tracker];
+		NSLog(@"%@", tracker);
+		
+		NSMutableArray *array = [@[@(3), @(6), @(1), @(5), @(7), @(2), @(3), @(7) , @(9)] mutableCopy];
+
+		NSArray *mew = [Me mergeSort:array];
+		NSLog(@"%@", mew);
+		[Me quickSortHolidays:array];
+		
+		NSArray *numbers = @[@(0),@(1),@(2),@(3),@(4),@(5),@(6),@(7),@(8),@(9), @(11)];
+		
+		NSLog(@"SEARCH 1: %@", [Me binarySearch:numbers withTarget:6] ? @"YES" : @"NO");
+		NSLog(@"SEARCH 2: %@", [Me binarySearchRecursive:[Me createBST:numbers] withTarget:60] ? @"YES" : @"NO");
+		
+		NodeBST *node = [Me createBSTHoliday:numbers];
+		LinkedNode *linked = [Me createDoublyLinkedList:numbers];
+		NodeBST *node = [Me doubleLinkedListToBST:linked];
+		
+		NSLog(@"%@", node);
+		
+		
+		NSLog(@"%@", [Me printOutLevelLineByLine:node]);
+		
+		NSLog(@"%i", (int)[Me getLevel:node]);
+		NSLog(@"hol %@", mew);
+		NSLog(@"%lu", (@"weM").hash);
+		
+		NSArray *ana = @[@"Cars", @"racs", @"ducks", @"dukcs"];
+		NSLog(@"%@", [[Me anafy2:ana] allValues]);
+		
+		NSArray *nums = @[@(2), @(3), @(0), @(1), @(6), @(0), @(0)];
+		    NSLog(@"%@", [Me moveTheZeros:nums]);
+		     NSLog(@"%@", [Me twoStacks:nums]);
+		
+		    [Me testRemove];
+		
+		NSArray *anas = @[@"ducks", @"sduck", @"car", @"racs", @"casr"];
+		NSLog(@"%@", [Me getListOfAnagrams:anas]);
+		
+
+		
+		
+		NSLog(@"%@", [Me canFindEnd:a withTarget:e] ? @"YES" : @"NO");
+		
+		NSArray *nodes = @[@(0), @(1), @(2), @(5), @(6), @(7)];
+		NSLog(@"%@", [Me findMissing:nodes withMissing:[NSMutableArray array] withStart:0 andFinish:nodes.count - 1]);
+
+		NodeBST *node = [Me createBST:nodes];
+		[Me preOrder:node];
+		
+		
+	}
+}
+
+
++ (Node *)createBSTFromArray:(NSArray *)input {
+	
+	if ([input count] == 0) {
+		return nil;
+	}
+	
+	NSInteger mid = floor([input count] / 2);
+	Node *node = [[Node alloc] init];
+	node.data = [input[mid] integerValue];
+	node.left = [Node createBSTFromArray:[[input mutableCopy] subarrayWithRange:NSMakeRange(0, mid)]];
+	node.right = [Node createBSTFromArray:[[input mutableCopy] subarrayWithRange:NSMakeRange(mid + 1, [input count] - 1 - mid)]];
+	
+	return node;
+}
+
++ (Node *)depthFirstWithStack:(Node *)input target:(NSInteger)target {
+	
+	Node *node;
+	NSMutableArray *stack = [[NSMutableArray array] init];
+	[stack addObject:input];
+	
+	while ([stack count]) {
+		
+		node = stack.lastObject;
+		[stack removeObject:stack.lastObject];
+		
+		if (node.data == target) {
+			break;
+		}
+		
+		if (node.left) {
+			[stack addObject:node.left];
+		}
+		
+		if (node.right) {
+			[stack addObject:node.right];
+		}
+		
+
+		
+	}
+	
+	return node;
+}
+
++ (Node *)bredthFirstWithQueue:(Node *)input target:(NSInteger)target {
+	
+	Node *node;
+	NSMutableArray *queue = [NSMutableArray array];
+	[queue addObject:input];
+	
+	while ([queue count]) {
+		
+		node = queue.firstObject;
+		[queue removeObject:queue.firstObject];
+		
+		if (node.data == target) {
+			break;
+		}
+		
+		if (node.right) {
+			[queue addObject:node.right];
+		}
+		
+		if (node.left) {
+			[queue addObject:node.left];
+		}
+		
+	}
+	
+	return node;
+}
+
+int main(int argc, char * argv[]) {
+	@autoreleasepool {
+		
+		NSArray *numbers = @[@(0), @(1), @(2), @(3), @(4), @(5), @(6), @(7), @(8)];
+		Node *node = [Node createBSTFromArray:numbers];
+
+		NSLog(@"%@", [Node depthFirstWithStack:node target:7]);
+		NSLog(@"%@", [Node bredthFirstWithQueue:node target:7]);
+	}
+}
+
+
++ (NodeBST *)createBST:(NSArray *)input {
+	
+	if ([input count] == 0) {
+		return nil;
+	}
+
+	
+	NSInteger mid = floorf([input count] / 2);
+	NodeBST *node = [[NodeBST alloc] init];
+	node.data = [input[mid] integerValue];
+	
+	NSArray *left = [input subarrayWithRange:NSMakeRange(0, mid)];
+	NSArray *right = [input subarrayWithRange:NSMakeRange(mid + 1, [input count] - mid - 1)];
+	
+	node.left = [NodeBST createBST:left];
+	node.right = [NodeBST createBST:right];
+	
+	return node;
+}
+
++ (void)inOrderTraversal:(NodeBST *)node {
+	
+	NSMutableArray *stack = [NSMutableArray array];
+	NodeBST *currentNode = node;
+	
+	while ([stack count] || currentNode) {
+		
+		if (currentNode) {
+			[stack addObject:currentNode];
+			currentNode = currentNode.left;
+		} else {
+			currentNode = stack.lastObject;
+			[stack removeObject:stack.lastObject];
+			NSLog(@"%li", currentNode.data);
+			currentNode = currentNode.right;
+		}
+		
+	}
+	
+}
+
++ (NSInteger)getMaxDepth:(NodeBST *)node {
+	if (!node) {
+		return 0;
+	}
+	
+	return MAX([NodeBST getMaxDepth:node.left], [NodeBST getMaxDepth:node.right]) + 1;
+}
+
++ (BOOL)isBalanced:(NodeBST *)node {
+	if (ABS([NodeBST getMaxDepth:node.left] - [NodeBST getMaxDepth:node.right]) > 1) {
+		return NO;
+	}
+	return YES;
+}
+
++ (NSArray *)createLinkedNodeLevelsForNode:(NodeBST *)node {
+	
+	NSMutableArray *levels = [NSMutableArray array];
+	NSMutableArray *queue = [NSMutableArray array];
+	[queue addObject:node];
+	
+	NSInteger totalLevel = 0;
+	NSInteger parentCount = 1;
+	NSInteger childCount = 0;
+	NodeBST *currentNode;
+	LinkedNode *linkedNode;
+	LinkedNode *currentLinkedNode;
+	
+	while ([queue count]) {
+		
+		parentCount--;
+		currentNode = queue.firstObject;
+		[queue removeObject:queue.firstObject];
+		
+		LinkedNode *newNode = [[LinkedNode alloc] init];
+		newNode.data = currentNode.data;
+		
+		if (!linkedNode) {
+			linkedNode = newNode;
+		} else {
+			currentLinkedNode.next = newNode;
+		}
+		
+		currentLinkedNode = newNode;
+		
+		if (currentNode.left) {
+			[queue addObject:currentNode.left];
+			childCount++;
+		}
+		
+		if (currentNode.right) {
+			[queue addObject:currentNode.right];
+			childCount++;
+		}
+		
+		if (parentCount == 0) {
+			NSLog(@"NEW LEVEL");
+			parentCount = childCount;
+			childCount = 0;
+			[levels insertObject:linkedNode atIndex:totalLevel];
+			totalLevel++;
+			linkedNode = nil;
+		}
+		
+	}
+	
+	return levels;
+}
+
+- (id)initWithLetter:(NSString *)letter {
+	if (self = [super init]) {
+		self.data = letter;
+	}
+	return self;
+}
+
++ (BOOL)canReachTarget:(GraphNode *)targetNode withInputNode:(GraphNode *)inputNode visitedTracker:(NSMutableArray *)tracker {
+	
+	if (targetNode == inputNode) {
+		return YES;
+	}
+	
+	for (GraphNode *node in inputNode.neighbours) {
+		
+		if (![tracker containsObject:node]) {
+			[tracker addObject:node];
+			return [GraphNode canReachTarget:targetNode withInputNode:node visitedTracker:[NSMutableArray array]];
+		}
+		
+	}
+	
+	return NO;
+}
+
++ (NSInteger)fibonaciTest:(NSInteger)atIndex {
+	
+	NSInteger number = 1;
+	NSInteger lastNumber = 0;
+	
+	while (atIndex > 0) {
+		lastNumber = number - lastNumber;
+		atIndex--;
+		number += lastNumber;
+	}
+	
+	return number;
+}
+
+@end
+
+int main(int argc, char * argv[]) {
+	@autoreleasepool {
+		
+		NSMutableArray *numbers = [@[@(0), @(1), @(2), @(3), @(4), @(5), @(6), @(7), @(8), @(9), @(10), @(11), @(11), @(11), @(11), @(11)] mutableCopy];
+		NodeBST *node = [NodeBST createBST:numbers];
+		
+		[NodeBST inOrderTraversal:node];
+		
+		NSArray *linkedNodes = [NodeBST createLinkedNodeLevelsForNode:node];
+		
+		NSLog(@"FIB DOG %li", [GraphNode fibonaciTest:12]);
+		
+		
+		NSLog(@"%li", [NodeBST getMaxDepth:node]);
+		NSLog(@"%@", [NodeBST isBalanced:node] ? @"YES" : @"NO");
+		
+		GraphNode *a = [[GraphNode alloc] initWithLetter:@"a"];
+		GraphNode *b = [[GraphNode alloc] initWithLetter:@"b"];
+		GraphNode *c = [[GraphNode alloc] initWithLetter:@"c"];
+		GraphNode *d = [[GraphNode alloc] initWithLetter:@"d"];
+		
+		a.neighbours = @[b, c];
+		b.neighbours = @[d];
+		c.neighbours = @[d];
+		
+		BOOL result = [GraphNode canReachTarget:d withInputNode:a visitedTracker:[NSMutableArray array]];
+		NSLog(@"%@", result ? @"YES" : @"NO");
+		
+	}
+}
+
+func phoneNumberToPermutations(input:String, builtUpString:String, indexUpTo:Int, var tracker:[String] = []) -> Array<String> {
+	
+	if (input.length == builtUpString.length) {
+		tracker.append(builtUpString)
+		return tracker
+	}
+	
+	let lookup = ["0": ["a", "b"], "1": ["c", "d"]]
+	let currentChar = input[indexUpTo] as String
+
+	if let items:Array<String> = lookup[currentChar] {
+
+		for i in 0..<items.count {
+			var newString = "\(builtUpString)\(items[i])"
+			tracker = phoneNumberToPermutations(input, newString, 1 + indexUpTo, tracker:tracker)
+		}
+		
+	}
+	
+	
+	return tracker
+}
+
+
+func primeNumberGenerator(max:Int) -> Array<Int> {
+	
+	var numbers:Dictionary<Int, Int> = [:]
+	for i in 2...max {
+		numbers[i] = i
+	}
+	
+	for n in 2...max {
+		for (var i = n * n; i <= max; i += n) {
+			numbers.removeValueForKey(i)
+		}
+	}
+	
+	return Array(numbers.values).sorted({ (a, b) -> Bool in
+		return a < b
+	})
+}
+
+
+func fibonacciSequence(max:Int) -> Array<Int> {
+	
+	var newNumber = 1
+	var lastNumber = newNumber
+	var sequence:[Int] = []
+
+	while newNumber < max {
+		newNumber += lastNumber
+		lastNumber = newNumber - lastNumber
+		if (newNumber < max) {
+			sequence.append(newNumber)
+		}
+	}
+	
+	return sequence
+}
+
+
+// 2, 1, 0, 2
+
+
+BOOL theFrogMakesIt(NSArray *input) {
+ 
+  NSMutableArray *stack = [NSMutableArray array];
+  NSInteger currentIndex = 0;
+  [stack addObject:input[0]];
+  
+  while (currentIndex < [input count] && [stack count] > 0) {
+
+    NSInteger toHop = [stack[0] integerValue];
+    currentIndex += toHop;
+
+    if (currentIndex >= [input count]) {
+      return YES;
+    }
+    
+    if ([stack[0] integerValue] > 0) {
+      [stack insertObject:input[currentIndex] atIndex:0];
+    }
+      
+    if ([stack[0] integerValue] == 0) {
+      [stack removeObject:stack[0]];
+      
+      if ([stack count] == 0) {
+        return NO;
+      }
+      
+      currentIndex -= [stack[0] integerValue];
+
+      stack[0] = @([stack[0] integerValue] - 1);
+    }
+    
+  }
+ 
+  return NO;
+}
+
+Hello how are you?
+
+NSString * reverseTheWords(NSString *input) {
+  NSMutableArray *word = [NSMutableArray array];
+  NSInteger indexOfWord = [input length] - 1;
+  NSMutableArray *words = [NSMutableArray array];
+  
+  while (indexOfWord >= 0) {
+    NSString *character = [NSString stringWithFormat:@"%c", [input characterAtIndex:indexOfWord]];
+    
+    if (![character isEqualToString:@" "]) {
+      [word insertObject:character atIndex:0];  
+    }
+    
+    if ([character isEqualToString:@" "] || indexOfWord == 0) {
+      NSString *wordAsString = [word componentsJoinedByString:@""];
+      [words addObject:wordAsString];
+      word = [NSMutableArray array];
+    }
+    indexOfWord--;
+  }
+  return [words componentsJoinedByString:@" "];
+}
+
+LinkedNode * reverseLinkedList(LinkedNode *)input {
+	
+	LinkedNode *currentNode;
+	LinkedNode *previousNode;
+	LinkedNode *nextNode;
+	
+	currentNode = input;
+	
+	while (currentNode) {
+		nextNode = currentNode.next;
+		currentNode.next = previousNode;
+		previousNode = currentNode;	
+		currentNode = nextNode;
+	}
+	
+	return previousNode;
+}
+
++ (LinkedNode *)recursiveReverseLinkedList:(LinkedNode *)p {
+	
+	if (!p) return nil;
+	LinkedNode *rest = p.next;
+	LinkedNode *head;
+	if (!rest) {
+		LinkedNode *head = p;
+		return head;
+	}
+	head = [Me recursiveReverseLinkedList:rest];
+	p.next.next = p;
+	p.next = nil;
+	p = rest;
+	return head;
+}
+
++ (LinkedNode *)reverseListMew:(LinkedNode *)currentNode withPreviousNode:(LinkedNode *)previousNode {
+	
+	if (!currentNode.next) {
+		currentNode.next = previousNode;
+		return currentNode;
+	} else {
+		LinkedNode *temp = [Me reverseListMew:currentNode.next withPreviousNode:currentNode];
+		currentNode.next = previousNode;
+		return temp;
+	}
+	
+}
+
+NSInteger romanNumeralsToInteger(NSString *input) {
+
+	NSArray *map = @[
+		@{@"M": @(1000)},
+		@{@"CM": @(1000)},
+		@{@"D": @(1000)},
+		@{@"CD": @(1000)},
+		@{@"C": @(1000)},
+		@{@"XC": @(1000)},
+		@{@"L": @(1000)},
+		@{@"XL": @(1000)},
+		@{@"X": @(1000)},
+		@{@"IX": @(1000)},
+		@{@"V": @(1000)},
+		@{@"IV": @(1000)},
+		@{@"I": @(1000)}
+	];
+
+	NSInteger currentMapIndex = 0;
+	NSInteger currentInputStringIndex = 0;
+	NSInteger output = 0;
+
+	while (currentMapIndex < [map count] && currentInputStringIndex < [input length]) {
+
+		NSString *currentMapKey = [map[currentMapIndex] allKeys][0];
+		NSInteger currentMapValue = [[map[currentMapIndex] allValues][0] integerValue];
+		NSString *inputSubString = [input substringWithRange:NSMakeRange(currentInputStringIndex, [currentMapKey length])];
+
+		if ([inputSubString isEqualToString:currentMapKey]) {
+			output += currentMapValue;
+			currentInputStringIndex += [currentMapKey length];
+		} else {
+			currentMapIndex++;
+		}
+
+	}
+
+	return output;
+}
+
+NSMutableArray * phoneNumberPermutations(NSString *phoneNumber, NSInteger currentCharacter, NSMutableArray *tracker) {
+
+	if (!tracker) {
+		tracker = [NSMutableArray array];
+	}
+
+	if (currentCharacter = [phoneNumber length]) {
+		[tracker addObject:phoneNumber];
+		return tracker;
+	}
+
+	NSDictionary *map = @{
+		@"1": @[@"A", @"B", @"C"],
+		@"2": @[@"D", @"E", @"F"]
+	};
+
+	NSString *currentChar = [NSString stringWithFormat:@"%c", [phoneNumber characterAtIndex:currentCharacter]];
+	NSArray *letters = map[currentChar];
+	for (int i=0; i < [letters count]; i++) {
+		NSString *newString = [phoneNumber stringByReplacingCharactersInRange:NSMakeRange(currentCharacter, 1) withString:letters[i]];
+		tracker = phoneNumberPermutations(newString, currentCharacter + 1, tracker);
+	}
+
+	return tracker;
+}
+
+LinkedNode * reverseListMew(LinkedNode *currentNode, LinkedNode *previousNode) {
+	
+	LinkedNode *temp;
+	if (!currentNode.next) {
+		currentNode.next = previousNode;
+		return currentNode;
+	} else {
+		temp = [Me reverseListMew:currentNode.next withPreviousNode:currentNode];
+		currentNode.next = previousNode;
+		return temp;
+	}
+	
+}
